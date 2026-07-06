@@ -109,6 +109,12 @@ spec:
         pod-annotation: pod-annotation
     spec:
       serviceAccountName: hcloud-cloud-controller-manager
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
       dnsPolicy: Default
       tolerations:
         # Allow HCCM itself to schedule on nodes that have not yet been initialized by HCCM.
@@ -137,6 +143,12 @@ spec:
         foo: bar
       containers:
         - name: hcloud-cloud-controller-manager
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
           command:
             - "/bin/hcloud-cloud-controller-manager"
             - "--allow-untagged-cloud"

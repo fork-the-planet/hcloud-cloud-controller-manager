@@ -107,6 +107,12 @@ spec:
         app.kubernetes.io/name: 'hcloud-cloud-controller-manager'
     spec:
       serviceAccountName: hcloud-cloud-controller-manager
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
       dnsPolicy: Default
       tolerations:
         # Allow HCCM itself to schedule on nodes that have not yet been initialized by HCCM.
@@ -128,6 +134,12 @@ spec:
           effect: "NoExecute"
       containers:
         - name: hcloud-cloud-controller-manager
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
           args:
             - "--allow-untagged-cloud"
             - "--cloud-provider=hcloud"
